@@ -20,14 +20,15 @@ const getQuery = () => {
   return query;
 }; 
 
-async function getMicroCmsData() {
-    // コンテンツIDとdraftKeyをURLから取得
+const getMicroCmsData = async () => {
+  // コンテンツIDとdraftKeyをURLから取得
   const { contentId, draftKey } = getQuery()
 
-  if(!contentId) return
+  if(!contentId)  throw new Error("URL params 'contentId' is required!")
 
+  const requestUrl = `https://cgmcms.microcms.io/api/v1/news/${contentId}?draftKey=${draftKey}`
   const dataResponse = await fetch(
-    `https://cgmcms.microcms.io/api/v1/news/${contentId}?draftKey=${draftKey}`,
+    requestUrl,
     {
       headers: { "X-API-KEY": "91dc81d6-9407-4b9d-aca8-41b6ec58909f" }
     }
@@ -40,7 +41,6 @@ async function getMicroCmsData() {
 async function insertHtml(){
   const data = await getMicroCmsData()
   const target = document.querySelector(".target")
-  console.log(data)
   const html = `<p>${data.paragraph}</p>`
   target.innerHTML = html
 }
